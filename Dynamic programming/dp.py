@@ -243,7 +243,81 @@ def coinPermutationTab(coins,n, Tar,dp):
         dp[n][tar]= perm
     return dp[n][Tar]
 
-dp=[[-1 for _ in range(13)]for _ in range(6)]
+def knapsack(n,values,weights,cap,dp):
+
+    #base case:
+    if(cap==0 or n==0):
+        dp[n][cap]= 0
+        return dp[n][cap]
+
+    if(dp[n][cap]!=-1):
+        return dp[n][cap]
+
+    if(cap<weights[n-1]):
+        exc=knapsack(n-1,values,weights,cap,dp)
+        dp[n][cap]=exc
+        return exc
+
+    #faith
+    inc=0
+    if(cap-weights[n-1]>=0):
+        inc=values[n-1]+knapsack(n-1,values,weights,cap-weights[n-1],dp)
+    exc=knapsack(n-1,values,weights,cap,dp)
+
+    dp[n][cap]= max(inc,exc)
+    return dp[n][cap]
+
+def knapsacktab(N,values,weights,Cap,dp):
+    for n in range(N+1):
+        for cap in range(Cap+1):
+
+            if(cap==0 or n==0):
+                dp[n][cap]= 0
+                continue
+
+
+            if(cap<weights[n-1]):
+                exc=knapsack(n-1,values,weights,cap,dp)
+                dp[n][cap]=exc
+                continue
+
+            inc=0
+            if(cap-weights[n-1]>=0):
+                inc=  values[n-1] + dp[n-1][cap-weights[n-1]]#knapsack(n-1,values,weights,cap-weights[n-1],dp)
+            exc= dp[n-1][cap] #knapsack(n-1,values,weights,cap,dp)
+
+            dp[n][cap]= max(inc,exc)
+
+    return dp[N][Cap]
+
+def knapsackUnbounded(n,values,weights,cap,dp):
+
+    #base case:
+    if(cap==0 or n==0):
+        dp[n][cap]= 0
+        return dp[n][cap]
+
+    if(dp[n][cap]!=-1):
+        return dp[n][cap]
+
+    if(cap<weights[n-1]):
+        exc=knapsackUnbounded(n-1,values,weights,cap,dp)
+        dp[n][cap]=exc
+        return exc
+
+
+    inc=values[n-1]+knapsackUnbounded(n,values,weights,cap-weights[n-1],dp)
+    exc=knapsackUnbounded(n-1,values,weights,cap,dp)
+
+    dp[n][cap]= max(inc,exc)
+    return dp[n][cap]
+
+
+
+
+
+
+dp=[[-1 for _ in range(8)] for _ in range(6)]
 mine=[[2,3,4,2],
        [1,4,5,3],
        [3,6,3,2],
@@ -251,7 +325,8 @@ mine=[[2,3,4,2],
        ]
 
 
-print(coinPermutationTab([2,3,5,7,11],5,12,dp))
+# print(coinPermutationTab([2,3,5,7,11],5,12,dp))
+print(knapsackUnbounded(5,[15,14,10,45,30],[2,5,1,3,4],7,dp))
 
 
 # print(mazePathMinimum(0,0,3,3,maze))
