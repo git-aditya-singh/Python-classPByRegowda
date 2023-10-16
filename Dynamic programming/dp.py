@@ -312,21 +312,46 @@ def knapsackUnbounded(n,values,weights,cap,dp):
     dp[n][cap]= max(inc,exc)
     return dp[n][cap]
 
+def countBinaryStringMemo(n,lastDigit,dp):
+    if(n==1):
+        dp[lastDigit][n]=1
+        return dp[lastDigit][n]
+    if(dp[lastDigit][n]!=-1):
+        return dp[lastDigit][n]
+    #faith
+    count=0
+    count+=countBinaryStringMemo(n-1,1,dp)
+    if(lastDigit!=0):
+        count+=countBinaryStringMemo(n-1,0,dp)
+    dp[lastDigit][n]=count
+    return dp[lastDigit][n]
+
+def countBinaryStringTab(N,dp):
+    for n in range(N+1):
+        if(n==1):
+            dp[0][n]=1
+            dp[1][n]=1
+            continue
+
+        count=0
+        dp[0][n]=dp[1][n-1]#countBinaryStringMemo(n-1,1,dp)
+        count+=dp[0][n]
+        dp[1][n]=dp[0][n-1]+count#countBinaryStringMemo(n-1,0,dp)
+
+    return dp[0][N]+dp[1][N]
 
 
 
-
-
-dp=[[-1 for _ in range(8)] for _ in range(6)]
+dp=[[-1 for _ in range(5)] for _ in range(2)]
 mine=[[2,3,4,2],
        [1,4,5,3],
        [3,6,3,2],
        [7,6,3,4]
        ]
 
-
+print(countBinaryStringTab(4,dp))
 # print(coinPermutationTab([2,3,5,7,11],5,12,dp))
-print(knapsackUnbounded(5,[15,14,10,45,30],[2,5,1,3,4],7,dp))
+# print(knapsackUnbounded(5,[15,14,10,45,30],[2,5,1,3,4],7,dp))
 
 
 # print(mazePathMinimum(0,0,3,3,maze))
