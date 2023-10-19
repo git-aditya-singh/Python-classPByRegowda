@@ -340,16 +340,140 @@ def countBinaryStringTab(N,dp):
 
     return dp[0][N]+dp[1][N]
 
+def countEncodings(str,n,dp):
+    #base
+    if(n==0 or n==1):
+        return 1
+    if(dp[n]!=-1):
+        return dp[n]
+    #faith
+    if(str[n-1]>'0'):
+        x=countEncodings(str,n-1,dp)
+    if(str[n-2]=='1' or (str[n-2]=='2' and str[n-1]<'7')):
+        y=countEncodings(str,n-2,dp)
+
+    dp[n]=x+y
+    return dp[n]
+
+def countEncodingsTab(str,N,dp):
+    for n in range(N+1):
+        if(n==0 or n==1):
+            dp[n]=1
+            continue
+        #faith
+        if(str[n-1]>'0'):
+            x=dp[n-1]#countEncodings(str,n-1,dp)
+        if(str[n-2]=='1' or (str[n-2]=='2' and str[n-1]<'7')):
+            y=dp[n-2]#countEncodings(str,n-2,dp)
+
+        dp[n]=x+y
+    return dp[N]
+
+def paintHouse(mat,n,lastColour):
+    if(n==0):
+        return 0
+    red=float('inf')
+    green=float('inf')
+    blue=float('inf')
+    if(lastColour!=0):
+        red=mat[n-1][0]+paintHouse(mat,n-1,0)
+    if(lastColour!=1):
+        green=mat[n-1][1]+paintHouse(mat,n-1,1)
+    if(lastColour!=2):
+        blue=mat[n-1][2]+paintHouse(mat,n-1,2)
+
+    return min(red,green,blue)
+
+def paintHouseMemo(mat,n,lastColour,dp):
+    if(n==0):
+        return 0
+    if(dp[n][lastColour]!=-1):
+        return dp[n][lastColour]
+    red=float('inf')
+    green=float('inf')
+    blue=float('inf')
+    if(lastColour!=0):
+        red=mat[n-1][0]+paintHouseMemo(mat,n-1,0,dp)
+    if(lastColour!=1):
+        green=mat[n-1][1]+paintHouseMemo(mat,n-1,1,dp)
+    if(lastColour!=2):
+        blue=mat[n-1][2]+paintHouseMemo(mat,n-1,2,dp)
+
+    dp[n][lastColour]=min(red,green,blue)
+    return dp[n][lastColour]
+
+def paintHouseTab(mat,N,dp):
+    for n in range(N+1):
+        if(n==0):
+            dp[n][0]=0
+            dp[n][1]=0
+            dp[n][2]=0
+            continue
+
+        dp[n][0]=min(mat[n-1][0]+dp[n-1][1],mat[n-1][0]+dp[n-1][2])#paintHouseMemo(mat,n-1,0,dp)
+        dp[n][1]=min(mat[n-1][1]+dp[n-1][0],mat[n-1][1]+dp[n-1][2])
+        dp[n][2]=min(mat[n-1][2]+dp[n-1][0],mat[n-1][2]+dp[n-1][1])
+        # green=mat[n-1][1]+paintHouseMemo(mat,n-1,1,dp)
+        # blue=mat[n-1][2]+paintHouseMemo(mat,n-1,2,dp)
+
+    return min(dp[N][0],dp[N][1],dp[N][2])
+
+def tileFloor(n,dp):
+    if(n==0 or n==1):
+        dp[n]= 1
+        return dp[n]
+    if(dp[n]!=-1):
+        return dp[n]
+    #faith
+    hz=tileFloor(n-2,dp)
+    vr=tileFloor(n-1,dp)
+    dp[n]= hz+vr
+    return dp[n]
+
+def tileFloorTab(N,dp):
+    for n in range(N+1):
+        if(n==0 or n==1):
+            dp[n]= 1
+            continue
+        #faith
+        hz=dp[n-2]#tileFloor(n-2,dp)
+        vr=dp[n-1]#tileFloor(n-1,dp)
+        dp[n]= hz+vr
+    return dp[N]
 
 
-dp=[[-1 for _ in range(5)] for _ in range(2)]
-mine=[[2,3,4,2],
-       [1,4,5,3],
-       [3,6,3,2],
-       [7,6,3,4]
+def friendsPairing(n,dp):
+    if(n==0 or n==1 or n==2):
+        dp[n]=n
+        return dp[n]
+    if(dp[n]!=-1):
+        return dp[n]
+    #faith
+    al=friendsPairing(n-1,dp)
+    pair=friendsPairing(n-2,dp)
+    dp[n]=al+((n-1)*pair)
+    return dp[n]
+
+def friendsPairingTab(N,dp):
+    for n in range(N+1):
+        if(n==0 or n==1 or n==2):
+            dp[n]=n
+            continue
+    #faith
+        al=dp[n-1]#friendsPairing(n-1,dp)
+        pair=dp[n-2]#friendsPairing(n-2,dp)
+        dp[n]=al+((n-1)*pair)
+    return dp[N]
+
+# dp=[[-1 for _ in range(3)] for _ in range(5)]
+dp=[-1]*5
+mat=[[2,3,4],
+       [1,4,5],
+       [3,6,3],
+       [7,6,3]
        ]
 
-print(countBinaryStringTab(4,dp))
+print(friendsPairingTab(4,dp))
 # print(coinPermutationTab([2,3,5,7,11],5,12,dp))
 # print(knapsackUnbounded(5,[15,14,10,45,30],[2,5,1,3,4],7,dp))
 
