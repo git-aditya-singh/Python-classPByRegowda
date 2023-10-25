@@ -1,3 +1,4 @@
+from queue import Queue
 class Node:
     def __init__(self,data=None):
         self.data=data
@@ -63,6 +64,61 @@ def display(root):
     display(root.left)
     display(root.right)
 
+def maxMinSize(root):
+
+    #base
+    if(root==None):
+        return 0,float('-inf'),float('inf')
+
+    #faith
+    ls,lmax,lmin=maxMinSize(root.left)
+    rs,rmax,rmin=maxMinSize(root.right)
+
+    size=ls+rs+1
+    maxans=max(lmax,rmax,root.data)
+    minans=min(lmin,rmin,root.data)
+    return size,maxans,minans
+
+def levelorder(root):
+
+    que=Queue()
+    que.put(root)
+    while(not que.empty()):
+        # count=que.qsize()
+        node=que.get()
+        print(node.data,end=" ")
+        if(node.left!=None):
+            que.put(node.left)
+        if(node.right!=None):
+            que.put(node.right)
+        print()
+
+def traverslainprepost(root):
+    st=[]
+    rp=Pair(root,1)
+    st.append(rp)
+    pre, inOrder ,post="","",""
+    while(len(st)>0):
+        top=st[-1]
+        if(top.vis==1):
+            pre+= str(top.node.data)+" "
+            top.vis+=1
+            if(top.node.left!=None):
+                lp=Pair(top.node.left,1)
+                st.append(lp)
+        elif(top.vis==2):
+            inOrder+= str(top.node.data)+" "
+            top.vis+=1
+            if(top.node.right!=None):
+                rp=Pair(top.node.right,1)
+                st.append(rp)
+        else:
+            post+=str(top.node.data)+" "
+            st.pop()
+    print(pre)
+    print(inOrder)
+    print(post)
+
 arr=[50,25,32,None,None,23,19,None,None,None,75,41,17,None,None,None,68,None,None]
 root,ind=constructRec(arr,0)
-display(root)
+traverslainprepost(root)
