@@ -119,6 +119,53 @@ def traverslainprepost(root):
     print(inOrder)
     print(post)
 
+def search(root,val):
+    if(root==None):
+        return False
+
+    if(root.data==val):
+        return True
+    #f1
+    la=search(root.left,val)
+    if(la):
+        return True
+    ra=search(root.right,val)
+    if(ra):
+        return True
+    return False
+
+def nodeToRootPath(root,val):
+    if(root==None):
+        return []
+
+    if(root.data==val):
+        return [root.data]
+    #f1
+    la=nodeToRootPath(root.left,val)
+    if(la):
+        la.append(root.data)
+        return la
+    ra=nodeToRootPath(root.right,val)
+    if(ra):
+        ra.append(root.data)
+        return ra
+    return []
+
+
+def printKlevelDown(root,k):
+    if(root==None):
+        return
+    #base
+    if(k==0):
+        print(root.data)
+        return
+
+    #f1
+    printKlevelDown(root.left,k-1)
+    printKlevelDown(root.right,k-1)
+
+
+
 arr=[50,25,32,None,None,23,19,None,None,None,75,41,17,None,None,None,68,None,None]
 root,ind=constructRec(arr,0)
-traverslainprepost(root)
+printKlevelDown(root,2)
