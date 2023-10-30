@@ -164,8 +164,67 @@ def printKlevelDown(root,k):
     printKlevelDown(root.left,k-1)
     printKlevelDown(root.right,k-1)
 
+def nodeRootPath(root,val):
+    if(root==None):
+        return []
 
+    if(root.data==val):
+        return [root]
+    #f1
+    la=nodeRootPath(root.left,val)
+    if(len(la)>0):
+        la.append(root)
+        return la
+    ra=nodeRootPath(root.right,val)
+    if(len(ra)>0):
+        ra.append(root)
+        return ra
+    return []
+
+def printKlevelD(root,k,blocker):
+    if(root==None or root==blocker):
+        return
+    #base
+    if(k==0):
+        print(root.data)
+        return
+
+    #f1
+    printKlevelD(root.left,k-1,blocker)
+    printKlevelD(root.right,k-1,blocker)
+
+def printKNodesAway(root,k,data):
+    ntrp=nodeRootPath(root,data)
+
+    for i in range(len(ntrp)):
+        blocker=None if i==0 else ntrp[i-1]
+        printKlevelD(ntrp[i],k-i,blocker)
+
+def printPathInRange(root,lo,hi,sum,asf):
+    if(root==None):
+        return
+    if(root.left==None and root.right==None):
+        if(sum+root.data<=hi and sum+root.data>=lo ):
+            print(asf+str(root.data))
+            return
+    #f1
+    printPathInRange(root.left,lo,hi,sum+root.data,asf+str(root.data)+" ")
+    printPathInRange(root.right,lo,hi,sum+root.data,asf+str(root.data)+" ")
+
+def leftClone(root):
+    if(root==None):
+        return None
+    lc=leftClone(root.left)
+    rc=leftClone(root.right)
+    node=Node(root.data)
+    root.left=node
+    node.left=lc
+    root.right=rc
+    return root
 
 arr=[50,25,32,None,None,23,19,None,None,None,75,41,17,None,None,None,68,None,None]
 root,ind=constructRec(arr,0)
-printKlevelDown(root,2)
+# printKlevelDown(root,2)
+# printPathInRange(root,100,180,0,"")
+root2=leftClone(root)
+display(root2)
