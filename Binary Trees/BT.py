@@ -10,6 +10,11 @@ class Pair:
         self.node=node
         self.vis=vis
 
+class Dpair:
+    def __init__(self,height=None,diameter=None):
+        self.height=height
+        self.diameter=diameter
+
 def construct(arr):
     st=[]
     root=Node(arr[0])
@@ -222,9 +227,61 @@ def leftClone(root):
     root.right=rc
     return root
 
+def height(root):
+    if (root == None):
+        return -1
+
+    #faith
+    left_height = height(root.left)
+    right_height = height(root.right)
+
+    # Use the larger one and add 1 for the root node
+    return max(left_height, right_height) + 1
+
+
+def diameter1(root):
+    if(root==None):
+        return 0
+    lh=height(root.left)
+    rh=height(root.right)
+    ind=lh+rh+2
+    ld=diameter1(root.left)
+    rd=diameter1(root.right)
+    td=max(ld,rd,ind)
+    return td
+
+def diameter2(root):
+    if(root==None):
+        basePair=Dpair()
+        basePair.height=-1
+        basePair.diameter=0
+        return basePair
+    ldp=diameter2(root.left)
+    rdp=diameter2(root.right)
+
+    dp=Dpair()
+    dp.height=max(ldp.height,rdp.height)+1
+    dp.diameter=max(ldp.height+rdp.height+2,ldp.diameter,rdp.diameter)
+    return dp
+
+tilt=0
+def findtilt(root):
+
+    global tilt
+    if(root==None):
+        return 0
+    ls=findtilt(root.left)
+    rs=findtilt(root.right)
+
+    tilt+=abs(ls-rs)
+    return ls+rs+root.data
+
+
+
 arr=[50,25,32,None,None,23,19,None,None,None,75,41,17,None,None,None,68,None,None]
 root,ind=constructRec(arr,0)
 # printKlevelDown(root,2)
 # printPathInRange(root,100,180,0,"")
-root2=leftClone(root)
-display(root2)
+# root2=leftClone(root)
+findtilt(root)
+print(tilt)
